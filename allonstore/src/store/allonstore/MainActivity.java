@@ -1,5 +1,6 @@
 package store.allonstore;
 
+import store.allonstore.ContactsList.NavigationDrawerCallbacks;
 import android.app.Activity;
 import android.support.annotation.MainThread;
 import android.support.v7.app.ActionBarActivity;
@@ -10,15 +11,18 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings.Global;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,21 +47,19 @@ public class MainActivity extends ActionBarActivity
     
     private ExpandableListView mListView;
     private DrawerLayout mDrawerLayout;
+    
+    private View mFragmentContainerView;
    
-
+    private boolean mFromSavedInstanceState;
+    private boolean mUserLearnedDrawer;
+    private int mCurrentSelectedPosition = 0;
+    private ListView mDrawerListView;
+    private NavigationDrawerCallbacks mCallbacks;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // mNavigationDrawerFragment = (NavigationDrawerFragment)
-        		//         getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        //mTitle = getTitle();
-
-        // Set up the drawer.
-        //mNavigationDrawerFragment.setUp(
-        		//        R.id.navigation_drawer,
-        		//        (DrawerLayout) findViewById(R.id.drawer_layout));
+     
         
         mContact = (ContactsList)
 		         getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -70,23 +72,36 @@ public class MainActivity extends ActionBarActivity
     	
     	mListView = (ExpandableListView)findViewById(R.id.listView);
     	mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-    
+    	mFragmentContainerView = (View)findViewById(R.id.navigation_drawer);
+    	//event click header
+        //mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+        //	@Override
+        //	public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+	    	
+	   // 	return false;
+	    //	}
+        //});
+    	
     	//event click children
     	mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
     	    @Override
     	    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
     	    	
     	    	String strChild = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).toString();
-    	    	onNavigationDrawerItemSelected(childPosition, strChild);
+    	    	onNavigationDrawerItemSelected(groupPosition, childPosition, strChild);
+    	    	int indexGroup =  parent.getFlatListPosition(ExpandableListView.getPackedPositionForChild(groupPosition, childPosition));
+		        mListView.setItemChecked(indexGroup, true);
+		        onSectionAttached(strChild);
+		        
     	    	return true;
     	    }
     	});
     	
     	
     }
-    
+        	
     @Override
-    public void onNavigationDrawerItemSelected(int position, String strChild) {
+    public void onNavigationDrawerItemSelected(int groupPosition, int position, String strChild) {
     	Fragment objFragment = null;
     	switch(position){
     	case 0:
@@ -110,8 +125,17 @@ public class MainActivity extends ActionBarActivity
                 .replace(R.id.container, objFragment)
                 .commit();
         
-        mListView.setItemChecked(position, true);
-        onSectionAttached(strChild);
+        mCurrentSelectedPosition = position;
+        if (mDrawerListView != null) {
+            mDrawerListView.setItemChecked(position, true);
+        }
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
+        if (mCallbacks != null) {
+            mCallbacks.onNavigationDrawerItemSelected(groupPosition, position, strChild);
+        }
+       
     }
 
     public void onSectionAttached(String title) {

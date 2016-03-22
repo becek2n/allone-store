@@ -9,8 +9,9 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_gravity="start"
-        android:background="#cccc"
+        android:background="#fff"
 	    android:choiceMode="singleChoice"
-	    android:dividerHeight="0dp"/>
+	    android:dividerHeight="0dp"
+	    android:animateLayoutChanges="true"/>
 
 </LinearLayout>

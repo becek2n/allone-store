@@ -68,7 +68,7 @@ public class ContactsList extends Fragment {
          ArrayList<Group> groups = prepareData();
          final CustomExpandableListAdapter adapter = new CustomExpandableListAdapter(thisContext, groups);
          listView.setAdapter(adapter);
-         
+         //setGroupIndicatorToRight();
          //event click header
          //listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
          //	    @Override
@@ -83,18 +83,18 @@ public class ContactsList extends Fragment {
         //	    }
         //	});
         	//event click childer
-    	listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-    	    @Override
-    	    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-    	        String child = (String) adapter.getChild(groupPosition, childPosition);
-    	 
-    	        Toast
-    	            .makeText(thisContext, child, Toast.LENGTH_SHORT)
-    	            .show();
-    	 
-    	        return false;
-    	    }
-    	});
+    	//listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+    	//    @Override
+    	 //   public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+    	//        String child = (String) adapter.getChild(groupPosition, childPosition);
+    	// 
+    	//        Toast
+    	//            .makeText(thisContext, child, Toast.LENGTH_SHORT)
+    	//            .show();
+    	// 
+    	//        return false;
+    	 //   }
+    	//});
          
          return rootView;
      }
@@ -235,7 +235,7 @@ public class ContactsList extends Fragment {
 	        return groups;
     }
 	    
-	 @SuppressLint("NewApi")
+	 //@SuppressLint("NewApi")
 	private void setGroupIndicatorToRight() {
 		/* Get the screen width */
 		DisplayMetrics dm = new DisplayMetrics();
@@ -332,7 +332,7 @@ public class ContactsList extends Fragment {
         /**
          * Called when an item in the navigation drawer is selected.
          */
-        void onNavigationDrawerItemSelected(int position, String strChild);
+        void onNavigationDrawerItemSelected(int groupPosition, int position, String strChild);
     }
 	
 	private void showGlobalContextActionBar() {
@@ -396,7 +396,7 @@ public class ContactsList extends Fragment {
         }
     }
     
-    private void selectItem(int position, String strChild) {
+    private void selectItem(int groupPosition, int position, String strChild) {
         mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
@@ -405,7 +405,7 @@ public class ContactsList extends Fragment {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(position, strChild);
+            mCallbacks.onNavigationDrawerItemSelected(groupPosition, position, strChild);
         }
     }
     
